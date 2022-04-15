@@ -1,29 +1,30 @@
 "use strict";
 //! basics: working with basic core types
 function add(n1, n2, showResult, phrase) {
-    const result = n1 + n2;
+    var result = n1 + n2;
     if (showResult) {
         console.log(phrase + result);
     }
     return result;
 }
-const number1 = 11;
-const number2 = 15.5;
-const printResult = true;
-const resultPhrase = 'The result is: ';
+var number1 = 11;
+var number2 = 15.5;
+var printResult = true;
+var resultPhrase = 'The result is: ';
 // add(number1, number2, printResult, resultPhrase);
 //! OBJECTS, ARRAYS, TUPLES
-const person = {
+var person = {
     name: 'Camilla',
     age: 24,
     hobbies: ['chess', 'drawing'],
     role: [2, 'author'] // specified it is a tupLe otherwise it would treat it as an array
 };
 person.role.push('admin'); // push works with tuples but it is the only way to insert a third value in it
-let favoriteActivities; //array of strings
+var favoriteActivities; //array of strings
 favoriteActivities = ['discovering', 'hiking'];
 // console.log(person.name);
-for (const hobby of person.hobbies) {
+for (var _i = 0, _a = person.hobbies; _i < _a.length; _i++) {
+    var hobby = _a[_i];
     // console.log(hobby.toUpperCase);
 }
 //! ENUMS
@@ -39,7 +40,7 @@ var Role;
 // const ADMIN = 0;
 // const READ_ONLY = 1;
 // const AUTHOR = 2;
-const person2 = {
+var person2 = {
     name: 'Camilla',
     age: 24,
     hobbies: ['chess', 'drawing'],
@@ -52,7 +53,7 @@ function combine(input1, //* same as number | string but with alias
 input2, //* same as number | string but with alias 
 resultConversion //adding 3rd parameter in case the number is passed as a string
 ) {
-    let result;
+    var result;
     if (typeof input1 === 'number' &&
         typeof input2 === 'number' ||
         resultConversion === 'as-number') {
@@ -68,9 +69,9 @@ resultConversion //adding 3rd parameter in case the number is passed as a string
     //     return result.toString();
     // }
 }
-const combinedAges = combine(30, 26, 'as-number');
-const combinedStringAges = combine('30', '26', 'as-number');
-const combinedNames = combine('mila', 'shiro', 'as-text');
+var combinedAges = combine(30, 26, 'as-number');
+var combinedStringAges = combine('30', '26', 'as-number');
+var combinedNames = combine('mila', 'shiro', 'as-text');
 // console.log(combinedAges);
 // console.log(combinedStringAges);
 // console.log(combinedNames);
@@ -83,20 +84,20 @@ function printResult2(num) {
     console.log('result: ' + num);
 }
 function addAndHandle(n1, n2, cb) {
-    const result = n1 + n2;
+    var result = n1 + n2;
     cb(result);
 }
-let combineValues; //* saying that it is a function and that accepts 2 parameters and returns a number
+var combineValues; //* saying that it is a function and that accepts 2 parameters and returns a number
 combineValues = add2;
 // console.log(combineValues(8,8))
 // printResult2(add2(5, 12));
-addAndHandle(10, 20, (result) => {
+addAndHandle(10, 20, function (result) {
     // console.log(result);
 });
 //! UNKNOW
 //? similar to any but less flexible
-let userInput;
-let userName;
+var userInput;
+var userName;
 userInput = 5;
 userInput = 'cami';
 // userName = userInput //* throws an error with unknown if if check not implemented
