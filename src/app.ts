@@ -1,59 +1,139 @@
-//! INTERFACES
-interface Person { //* const Person = {} would be an object
-    name: string; //*can't have a default value
-    age: number;
-    greet(phrase:string): void; //* a function (not obliged to add parameters)
+//! INTERSECTION TYPES
+type Admin = {
+    name: string;
+    privileges: string[];
+};
+type Employee = {
+    name: string;
+    startDate: Date;
+};
+type ElevatedEmployee = Admin & Employee; //*intersection
+// interface ElevatedEmployee extends Employee, Admin {} //* if i used interfaces (same thing as above)
+
+const e1: ElevatedEmployee = {
+    name: 'camilla',
+    privileges: ['create-server'],
+    startDate: new Date()
+};
+
+//! TYPE GUARD & FUNCTION OVERLOAD
+type Combinable2 = string | number;
+type Numeric = number | boolean;
+type Universal = Combinable2 & Numeric; //*intersection
+
+function add6(a: Combinable2, b: Combinable2) {
+    if (typeof a === 'string' || typeof b === 'string') { //?guard checks type
+        return a.toString() + b.toString(); //* Either concatenate
+    }
+    return a + b; //* or add mathematically
 }
-let user1: Person;
-user1 = {
-    name: 'cami',
-    age: 24,
-    greet(phrase: string) {
-        console.log(phrase + ' ' + this.name);
+
+function add7(a: number, b: number): number; //? function overload
+function add7(a: string, b: string): string; //? function overload
+
+function add7(a: Combinable2, b: Combinable2) {
+    if (typeof a === 'string' || typeof b === 'string') { 
+        return a.toString() + b.toString(); //* Either concatenate
+    }
+    return a + b; //* or add mathematically
+}
+const result = add7('camilla', ' manzo');
+result.split(' '); //? split now works cause we specified with function overload that string + string = string
+// console.log(result);
+
+type UnknownEmployee = Employee | Admin; //? unknown is either employee or admin
+function printEmployeeInfo(emp: UnknownEmployee) {
+    console.log('Name: ' + emp.name);
+    if('privileges' in emp) { //? guard checks if privileges is inside employee (in is available in js)
+        console.log('Privileges: ' + emp.privileges)
+    }
+    if('startDate' in emp) { 
+        console.log('Start date: ' + emp.startDate)
     }
 }
-// user1.greet('Hola, I am');
+// printEmployeeInfo(e1);
+// printEmployeeInfo({name: 'cami', startDate: new Date}); //*creating object on the fly
 
-//! INTERFACES INHERITANCE (CLASSES & INTERFAECES)
-interface Named {
-    readonly name?: string; //? not possible to state private and public (only one available is readonly)
-    outputName?: string; //* putting '?' means it can exist but is not mandatory (optional)
-}
-interface Greetable extends Named{ //* sub classes must have both name and greet()
-    greet(phrase:string): void;
-}
 
-class Person2 implements Greetable { //* other interfaces can be added with a comma (not possible in classes)
-    name?: string; //* obliged to use the same structure as interface implemented
-    age = 24; //* you can also add more parameters
-    constructor(n?:string) { //? for non optional remove '?' and initialize without condition
-        if(n) { //?because name is optional 
-            this.name = n;
-        }
-    }
-    greet(phrase: string) { //* obligatory bacause used in greetable
-        if (this.name) {
-            console.log(phrase + ' ' + this.name);
-        }
-        console.log('hola!')
+class Car {
+    drive() {
+        console.log('driving...');
     }
 }
-let user2: Greetable;
-let user3: Greetable;
+class Truck {
+    drive() {
+        console.log('driving a truck...')
+    }
+    loadCargo(amount: number) {
+        console.log('loading' + amount)
+    }
+}
+type Vehicle = Car | Truck;
+const v1 = new Car;
+const v2 = new Truck;
 
-user2 = new Person2();
-// user2.greet(''); //* output: 'hola!' cause we didnt provide a name
-user3 = new Person2('camilla')
-// user3.greet('hola, I am') //*output: 'hola i am camilla cause name is provided
-// console.log(user2)
+function useVehicle(vehicle: Vehicle) {
+    vehicle.drive();
+    if(vehicle instanceof Truck) { //? instanceof to see if vehicle was creadìted based on truck (only with classes - no interfaces)
+        vehicle.loadCargo(1000);
+    }
+}
+// useVehicle(v1)
+// useVehicle(v2)
 
-//! INTERFACES AS FUNCTIONS
-// type addFn = (a: number, b: number) => number;
-interface addFn { //* quicker to use custom function type (ex above) but nice alternative
-    (a: number, b: number): number //* method that takes 2 numbers and returns a number
+//! DISCRIMINATED UNIONS    
+interface Bird {
+    kind: 'bird'; //?common property in every object in union to use for check
+    flyingSpeed: number;
+}
+interface Horse {
+    kind: 'horse'; //*adding literal type also for switch statement
+    runningSpeed: number;
+}
+type Animal = Bird | Horse;
+
+function moving(animal: Animal) {
+    let speed;
+    switch (animal.kind) {
+        case 'bird':
+            speed = animal.flyingSpeed;
+            break
+        case 'horse':
+            speed = animal.runningSpeed;
+    }
+    console.log('moving at speed: ' + speed);
 }
 
-let add5: addFn;
-add5 = (n1:number, n2: number) => {
-    return n1 + n2;
+// moving({kind: 'bird', flyingSpeed: 15});
+
+//! TYPE CASTING (acces DOM)
+const par = document.getElementById('message-output');
+// const userInputElement = <HTMLInputElement>document.getElementById('user-input'); //*same as below
+const userInputElement = document.getElementById('user-input')! as HTMLInputElement; //* just '!' is another alternative
+userInputElement.value = 'hi there!' //*would get an error without casting above cause unsure if element exists
+
+//! INDEX TYPES
+interface ErrorContainer {//* to check if ex. forms are filled correctly etc
+    // id: number; //* would give error 
+    // id: string; //*because below we are saying that every value must be a string we cannot set anything to not string 
+    [prop: string]: string; //? syntax to say that the property name is a string and its value is also a string
 }
+const errorBag: ErrorContainer = {
+    email: 'not a valid email',
+    username: 'must start with capital character'
+}
+
+//! OPTIONAL CHAINING OPERATOR (?)
+//? used to access nested data (if undefined it stops instead of throwing an error)
+const fetchedUserData = {
+    id: 'u1',
+    name: 'Cami',
+    job: { title: 'CEO', description: 'My own company' }
+}
+// console.log(fetchedUserData.job.title) //* would give error if job didnt exist
+// console.log(fetchedUserData?.job?.title) //? by adding question marks we are only accessing it if it exists
+
+//! NULLISH COALESCING (fallback)
+const userInput2 = null;
+// const storedData = userInput2 || 'DEFAULT'; //* but if data is empty string it treats it as null (bad)
+const storedData = userInput2 ?? 'DEFAULT'; //? with '??' it only takes values that are null or undefined 
