@@ -125,16 +125,17 @@ interface ValidatorConfig {
 const registeredValidators: ValidatorConfig = {};
 
 function Required(target: any, propName: string) {
-    registeredValidators[target.constructor.name] = {
-        ...registeredValidators[target.constructor.name], //*spread operator adds first existing key value pairs for that class name
-        [propName]: ['required']
-    };
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: [...registeredValidators[target.constructor.name][propName], 'required']
+  };
 }
+
 function PositiveNumber(target: any, propName: string) {
-    registeredValidators[target.constructor.name] = {
-        ...registeredValidators[target.constructor.name],
-        [propName]: ['positive']
-    };
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: [...registeredValidators[target.constructor.name][propName], 'positive']
+  };
 }
 function validate(obj: any) {
     const objValidatorConfig = registeredValidators[obj.constructor.name];
