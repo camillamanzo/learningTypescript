@@ -114,7 +114,7 @@ function Required(target, propName) {
     registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ['required'] });
 }
 function PositiveNumber(target, propName) {
-    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ['postive'] });
+    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ['positive'] });
 }
 function validate(obj) {
     const objValidatorConfig = registeredValidators[obj.constructor.name];

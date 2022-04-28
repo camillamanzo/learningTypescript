@@ -133,18 +133,18 @@ function Required(target: any, propName: string) {
 function PositiveNumber(target: any, propName: string) {
     registeredValidators[target.constructor.name] = {
         ...registeredValidators[target.constructor.name],
-        [propName]: ['postive']
+        [propName]: ['positive']
     };
 }
 function validate(obj: any) {
     const objValidatorConfig = registeredValidators[obj.constructor.name];
-    if(!objValidatorConfig) {
+    if (!objValidatorConfig) {
         return true;
     }
     let isValid = true;
-    for(const prop in objValidatorConfig) {
+    for (const prop in objValidatorConfig) {
         // console.log(prop);
-        for( const validator of objValidatorConfig[prop]) {
+        for (const validator of objValidatorConfig[prop]) {
             switch (validator) {
                 case 'required':
                     isValid = isValid && !!obj[prop]; //? '!!' return to real true or false value
@@ -165,7 +165,7 @@ class Course {
 
     constructor(t: string, p: number) {
         this.title = t;
-        this.price = p
+        this.price = p;
     }
 }
 const courseForm = document.querySelector('form')!;
@@ -181,5 +181,5 @@ courseForm.addEventListener('submit', event => {
     if(!validate(createdCourse)) {
         alert('try again!');
         return;
-    }console.log(createdCourse)
+    }console.log(createdCourse);
 });
